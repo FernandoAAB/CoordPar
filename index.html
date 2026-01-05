@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Paroquias</title>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .wp {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            width: 90%;
+            max-width: 600px;
+            z-index: 1000;
+        }
+
+        #Pesquisar {
+            flex: 1;
+            padding: 5px 12px;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 40px 0 0 40px;
+            outline: none;
+            margin: 0;
+            background-color: white;
+        }
+
+        button {
+            padding: 0 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 40px 40px 0;
+            border: none;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+<body style="background-color: #000000; margin: 0;">
+    <div class="wp">
+        <input id="Pesquisar" type="text" placeholder="Pesquisar">
+        <button onclick="buscarParoquia()">Buscar</button>
+    </div>
+
+
+    <div id="meuMapa" style="height: 650px; width: 100%; display: flex;"></div>
+    <script>
+        // Inicializa o mapa centralizado
+        var mps = L.map('meuMapa').setView([-19.7473282, -45.6837677], 9.17);
+
+        var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mps);
+        var pontos = [
+            {
+                nome: "Luz-MG - Diocese de Luz",
+                coords: [-19.799965833525082, -45.68692940264181]
+            },
+            // 
+            // {
+            //     nome: "Abaeté-MG – Paróquia Bom Pastor",
+            //     coords: []
+            // },
+            {
+                nome: "Abaeté-MG – Paróquia Nossa Senhora do Patrocínio",
+                coords: [-19.158820806207125, -45.44696349543286]
+            },
+            {
+                nome: "Arcos-MG – Paróquia Nossa Senhora do Carmo",
+                coords: [-20.2815567846022, -45.54040993498653]
+            },
+            {
+                nome: "Arcos-MG – Paróquia Nossa Senhora do Rosário",
+                coords: [-20.292620681186825, -45.54360266835761]
+            },
+            {
+                nome: "Arcos-MG – Paróquia Santa Rita de Cássia",
+                coords: [-20.265248168851983, -45.55249368146206]
+            },
+            {
+                nome: "Arcos-MG – Paróquia Santo Antônio",
+                coords: [-20.29193680573089, -45.53229673582178]
+            },
+            {
+                nome: "Arcos-MG – Paróquia São Cristóvão",
+                coords: [-20.285117064074427, -45.54975877136095]
+            },
+            {
+                nome: "Bambuí-MG – Paróquia Nossa Senhora das Graças",
+                coords: [-20.013390083423058, -45.98634398361512]
+            },
+            {
+                nome: "Bambuí-MG – Paróquia Sagrado Coração de Jesus",
+                coords: [-20.018638823612, -45.96636359447112]
+            },
+            {
+                nome: "Bambuí-MG – Paróquia Sant’Ana",
+                coords: [-20.007670728029055, -45.977466977990495]
+            },
+            {
+                nome: "Biquinhas-MG – Paróquia São Sebastião",
+                coords: [-18.78353430584016, -45.503389969141274]
+            },
+            {
+                nome: "Bom Despacho-MG – Paróquia Nossa Senhora do Bom Despacho",
+                coords: [-19.737161509941807, -45.25218041661259]
+            },
+            {
+                nome: "Bom Despacho-MG – Paróquia Nossa Senhora do Rosário",
+                coords: [-19.74380198860523, -45.263328068917424]
+            },
+            {
+                nome: "Bom Despacho-MG – Paróquia São José Operário",
+                coords: [-19.75356328035266, -45.25434023285235]
+            },
+            {
+                nome: "Bom Despacho-MG – Paróquia São Vicente de Paulo",
+                coords: [-19.746236279268114, -45.28056560859565]
+            },
+            {
+                nome: "Campos Altos-MG – Paróquia Santa Terezinha",
+                coords: [-19.7049487, -46.17755]
+            },
+            {
+                nome: "Capitólio-MG – Paróquia São Sebastião",
+                coords: [-20.61521319991523, -46.050560793255094]
+            },
+            {
+                nome: "Córrego Danta-MG – Paróquia São José",
+                coords: [-19.823469990512095, -45.904342976686976]
+            },
+            {
+                nome: "Córrego Fundo-MG – Paróquia Sagrada Família",
+                coords: [-20.449461371660224, -45.555629922080215]
+            },
+            {
+                nome: "Dores do Indaiá-MG – Paróquia Nossa Senhora das Dores",
+                coords: [-19.46277472709765, -45.60208309676234]
+            },
+            {
+                nome: "Doresópolis-MG – Paróquia Nossa Senhora das Dores",
+                coords: [-20.287713370520066, -45.904029624334456]
+            },
+            {
+                nome: "Estrela do Indaiá-MG – Paróquia São Sebastião",
+                coords: [-19.521564445228606, -45.788521557581184]
+            },
+            {
+                nome: "Formiga-MG – Paróquia Nossa Senhora de Lourdes",
+                coords: [-20.47684370086325, -45.419354838953375]
+            },
+            {
+                nome: "Formiga-MG – Paróquia Sagrado Coração de Jesus",
+                coords: [-20.459689376029008, -45.438367746232636]
+            },
+            {
+                nome: "Formiga-MG – Paróquia São Geraldo",
+                coords: [-20.4535148054517, -45.42507840975387]
+            },
+            {
+                nome: "Formiga-MG – Paróquia São Judas Tadeu",
+                coords: [-20.475687929052054, -45.428379542515096]
+            },
+            {
+                nome: "Formiga-MG – Paróquia São Paulo Apóstolo",
+                coords: [-20.46699619859, -45.44022872463451]
+            },
+            {
+                nome: "Formiga-MG – Paróquia São Sebastião",
+                coords: [-20.45166065147225, -45.44587120787719]
+            },
+            {
+                nome: "Formiga-MG – Paróquia São Vicente Férrer",
+                coords: [-20.46424845223349, -45.426398716982675]
+            },
+            {
+                nome: "Iguatama-MG – Paróquia Nossa Senhora da Abadia",
+                coords: [-20.174023249688947, -45.71071640685098]
+            },
+            {
+                nome: "Japaraíba-MG – Paróquia Nossa Senhora do Rosário",
+                coords: [-20.142081647694482, -45.503808165974405]
+            },
+            {
+                nome: "Lagoa da Prata-MG – Paróquia Nossa Senhora Aparecida",
+                coords: [-20.015477853325446, -45.545279717086295]
+            },
+            {
+                nome: "Lagoa da Prata-MG – Paróquia Nossa Senhora de Guadalupe",
+                coords: [-20.043538541598394, -45.540612885607324]
+            },
+            {
+                nome: "Lagoa da Prata-MG – Paróquia São Carlos Borromeu",
+                coords: [-20.023452438706247, -45.54410092037023]
+            },
+            {
+                nome: "Lagoa da Prata-MG – Paróquia São Francisco de Assis",
+                coords: [-20.017773935381182, -45.526417744946]
+            },
+            {
+                nome: "Lagoa da Prata-MG – Paróquia São Sebastião",
+                coords: [-20.03571170638859, -45.52523080506299]
+            },
+            {
+                nome: "Luz-MG – Paróquia Nossa Senhora da Luz",
+                coords: [-19.8011102, -45.6859421]
+            },
+            {
+                nome: "Luz-MG – Paróquia São José Operário",
+                coords: [-19.786962, -45.685809]
+            },
+            {
+                nome: "Medeiros-MG – Paróquia São José",
+                coords: [-19.995443654447367, -46.22126069096631]
+            },
+            {
+                nome: "Moema-MG – Paróquia São Pedro",
+                coords: [-19.84352620246383, -45.410033000526994]
+            },
+            {
+                nome: "Morada Nova de Minas-MG – Paróquia Nossa Senhora do Loreto",
+                coords: [-18.610481163412697, -45.35617117615223]
+            },
+            {
+                nome: "Paineiras-MG – Paróquia São Rafael Arcanjo",
+                coords: [-18.903771202739083, -45.53341356309116]
+            },
+            {
+                nome: "Pains-MG – Paróquia Nossa Senhora do Carmo",
+                coords: [-20.370932154828843, -45.66188721015494]
+            },
+            {
+                nome: "Pimenta-MG – Paróquia Nossa Senhora do Rosário",
+                coords: [-20.4795722, -45.7994669]
+            },
+            {
+                nome: "Piumhi-MG – Paróquia Nossa Senhora do Livramento",
+                coords: [-20.466731794768275, -45.956870889688695]
+            },
+            {
+                nome: "Piumhi-MG – Paróquia Santo Antônio",
+                coords: [-20.478205075465095, -45.96180717269404]
+            },
+            {
+                nome: "Piumhi-MG – Paróquia São Sebastião",
+                coords: [-20.456526844465365, -45.96526400055609]
+            },
+            {
+                nome: "Pratinha-MG – Paróquia Santo Antônio",
+                coords: [-19.75163842710906, -46.37904880201818]
+            },
+            {
+                nome: "Quartel Geral-MG – Paróquia Divino Espírito Santo",
+                coords: [-19.273201249781334, -45.55700242157638]
+            },
+            {
+                nome: "Santa Rosa da Serra-MG – Paróquia Santa Rosa de Lima",
+                coords: [-19.528504233107544, -45.96430843960458]
+            },
+            {
+                nome: "Santo Antônio do Monte-MG – Paróquia Santo Antônio",
+                coords: [-20.086674777887456, -45.291058233500785]
+            },
+            {
+                nome: "Santo Antônio do Monte-MG – Paróquia São João Bosco",
+                coords: [-20.08051517449518, -45.298428621207655]
+            },
+            {
+                nome: "Santo Antônio do Monte-MG – Paróquia São José",
+                coords: [-20.096059401678026, -45.28004002880165]
+            },
+            {
+                nome: "São Roque de Minas-MG – Paróquia São Roque",
+                coords: [-20.245728882274854, -46.36623443131789]
+            }
+        ];
+        var marcador = [];
+        pontos.forEach(function (ponto) {
+            var icon = ponto.nome === "Luz-MG - Diocese de Luz" // cor
+                ? redIcon
+                : undefined;
+            var marker = L.marker(ponto.coords, icon ? { icon } : {})
+                .addTo(mps)
+                .bindPopup("<b>" + ponto.nome + "</b>");
+
+            marcador.push({
+                nome: ponto.nome,
+                marker: marker,
+                coords: ponto.coords
+            });
+        });
+
+        function buscarParoquia() {
+            var texto = document.getElementById("Pesquisar").value
+                .toLowerCase()
+                .trim();
+
+            if (!texto) return;
+            var item = marcador.find(m =>
+                m.nome.toLowerCase().includes(texto)
+            );
+
+            if (item) {
+                mps.setView(item.coords, 15);
+                item.marker.openPopup();
+            } else {
+                alert("Paróquia não encontrada");
+            }
+        }
+
+    </script>
+</body>
+
+</html>
