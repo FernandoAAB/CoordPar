@@ -9,13 +9,21 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
+        html,
+        body {
+            background-color: #000000;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+
         .wp {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            width: 90%;
+            width: 70%;
             max-width: 600px;
             z-index: 1000;
         }
@@ -23,52 +31,99 @@
         #Pesquisar {
             flex: 1;
             padding: 5px 12px;
-            font-size: 18px;
+            font-size: 15px;
             text-align: center;
             border-radius: 40px 0 0 40px;
             outline: none;
             margin: 0;
-            background-color: white;
+            background-color: #ffffff;
         }
 
-        button {
-            padding: 0 30px;
+        button.PesqBut {
+            padding: 0 18px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             background-color: #007bff;
-            color: white;
+            color: #ffffff;
             border-radius: 0 40px 40px 0;
             border: none;
             transition: background 0.3s;
         }
 
-        button:hover {
+        button.PesqBut:hover {
             background-color: #0056b3;
+        }
+
+        #meuMapa {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            position: relative;
+        }
+
+        button.botao-tema {
+            position: fixed;
+            bottom: 35px;
+            right: 20px;
+            z-index: 2000;
+            background-color: #ffffff;
+            border: 1px solid #000;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
         }
     </style>
 
-<body style="background-color: #000000; margin: 0;">
+<body>
     <div class="wp">
         <input id="Pesquisar" type="text" placeholder="Pesquisar">
-        <button onclick="buscarParoquia()">Buscar</button>
+        <button class="PesqBut" onclick="buscarParoquia()">Buscar</button>
     </div>
-
-
-    <div id="meuMapa" style="height: 650px; width: 100%; display: flex;"></div>
+    <div id="meuMapa"></div>
+    <button class="botao-tema" onclick="temas()">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAsQAAALEBxi1JjQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEhSURBVEiJtdOxSsNQGIbhB3ETRxXq4uQugpuDsyCiS8FRcHCpdRJ0dvECHHoXXoAiSJ2l0FUdBRXRVrfWIQ2Ekp6kTfrDPwTO977kOwmTTQ2vWJ8wH5wT9Af7h Y1pwUuXVFPg8X4qWFcFc7gLSCZ+kzo62JqGpJ4Id8uW7KeEf7BZluRxRLg0SSsQjiXzeAice wkJLgLBvJJaSDCL+5yStLrOQvB4rjMEoyS54KuDcJZguK5qHvgK2jnhSUklBF3EAa7wMSa8j9 MQ/Bi/GYCu6E5ux4XvoJcBb4tqI/q6zvGEJvZCcEb/sfG+YzkLEpq/BOwGu0OCyyLwGXwnntdwOHSmVUQADaPr6WChqGAJzynwHo6KwpOSBt5Ed9LEdhngf3OG6Q2ExWXyAAAAAElFTkSuQmCC"
+            style="background-color: #ffffff;" alt="img"></button>
     <script>
+
+        // parte de temas claro e escuro
+        var lightLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        });
+        var darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+        });
         // Inicializa o mapa centralizado
-        var mps = L.map('meuMapa').setView([-19.7473282, -45.6837677], 9.17);
+        var mps = L.map('meuMapa', { center: [-19.7473282, -45.6837677], zoom: 9.17, layers: [lightLayer] });
+        function temas() {
+            const botaoTema = document.querySelector('.botao-tema');
+            const botaoImg = document.querySelector('.botao-tema img');
+            const Pesquisar = document.querySelector('#Pesquisar');
+
+            if (mps.hasLayer(lightLayer)) {
+                mps.removeLayer(lightLayer);
+                mps.addLayer(darkLayer);
+                botaoTema.style.cssText = `background-color: #4f4e4e; border-color: #ffffff;`;
+                botaoImg.style.backgroundColor = '#4f4e4e';
+                Pesquisar.style.cssText = `background-color: #4f4e4e; color: #ffffff; border-color: #ffffff;`;
+
+            } else {
+                mps.removeLayer(darkLayer);
+                mps.addLayer(lightLayer);
+                botaoTema.style.cssText = `background-color: #ffffff; border-color: #000000;`;
+                botaoImg.style.backgroundColor = '#ffffff';
+                Pesquisar.style.cssText = `background-color: #ffffff; color: #4f4e4e; border-color: #4f4e4e;`;
+            }
+        }
+        // parte de temas claro e escuro
 
         var redIcon = new L.Icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconUrl: 'data:image/png;base64,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',
+            shadowUrl: 'data:imagem/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAApCAQAAAACach9AAACMUlEQVR4Ae3ShY7jQBAE0Aoz/f9/HTMzhg1 zrdKUrJbdx+Kd2nD8VNudfsL/Th///dyQN2TH6f3y/BGpC379rV+S+qqetBOxImNQXL8JCAr2V4iMQXHGNJxeCfZXhSRBcQMfvkOWUdtfz lLgAENmZDcmo2TVmt8OSM2eXxBp3DjHSMFutqS7SbmemzBiR+xpKCNUIRkdkkYxhAkyGoBvyQFEJEefwSmmvBfJuJ6aKqKWnAkvGZOaZXT UgFqYULWNSHUckZuR1HIIimUExutRxwzOLROIG4vKmCKQt364mIlhSyzAf1m9lHZHJZrlAOMMztRRiKimp/rpdJDc9Awry5xTZCte7FHtu S8wJgeYGrex28xNTd086Dik7vUMscQOa8y4DoGtCCSkAKlNwpgNtphjrC6MIHUkR6YWxxs6Sc5xqn222mmCRFzIt8lEdKx+ikCtg91qS2WpwVfBelJCiQJwvzixfI9cxZQWgiSJelKnwBElKYtDOb2MFbhmUigbReQBV0Cg4+qMXSxXSyGUn4UbF8l+7qdSGnTC0XLCmahIgUHLhLOh pVCtw4CzYXvLQWQbJNmxoCsOKAxSgBJno75avolkRw8iIAFcsdc02e9iyCd8tHwmeSSoKTowIgvscSGZUOA7PuCN5b2BX9mQM7S0wYhMNU 74zgsPBj3HU7wguAfnxxjFQGBE6pwN+GjME9zHY7zGp8wVxMShYX9NXvEWD3HbwJf4giO4CFIQxXScH1/TM+04kkBiAAAAAElFTkSuQmCC',
             iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
         });
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(mps);
         var pontos = [
             {
                 nome: "Luz-MG - Diocese de Luz",
@@ -325,7 +380,6 @@
                 alert("Paróquia não encontrada");
             }
         }
-
     </script>
 </body>
 
