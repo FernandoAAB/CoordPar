@@ -129,6 +129,7 @@
             const Botaofiltro = document.querySelector('.botao-filtro');
             const FiltroImg = document.querySelector('.botao-filtro img');
             const Pesquisar = document.querySelector('#Pesquisar');
+            const Carregamento = document.querySelector('.leaflet-container');
             const Menos = document.querySelector('.leaflet-control-zoom-in');
             const Mais = document.querySelector('.leaflet-control-zoom-out');
             const Atribuicao = document.querySelector('.leaflet-container .leaflet-control-attribution');
@@ -145,19 +146,20 @@
                 Menos.style.cssText = `background-color: #4f4e4e; color: #ffffff; border: 1px solid #ffffff;`;
                 Mais.style.cssText = `background-color: #4f4e4e; color: #ffffff; border: 1px solid #ffffff;`;
                 Atribuicao.style.cssText = `background: #4f4e4e; color: #ffffff;`;
+                Carregamento.style.backgroundColor = '#000000';
 
             } else {
                 mps.removeLayer(darkLayer);
                 mps.addLayer(lightLayer);
-                BotaoTema.style.cssText = `background-color: #ffffff; border-color: #878282`;
+                BotaoTema.style.cssText = `background-color: #ffffff; border-color: #cfcdca`;
                 TemaImg.style.backgroundColor = '#ffffff';
-                Botaofiltro.style.cssText = `background-color: #ffffff; border-color: #878282;`;
+                Botaofiltro.style.cssText = `background-color: #ffffff; border-color: #cfcdca;`;
                 FiltroImg.style.backgroundColor = '#ffffff';
                 Pesquisar.style.cssText = `background-color: #ffffff; color: #4f4e4e; border-color: #4f4e4e;`;
                 Menos.style.cssText = `background-color: #ffffff; color: #4f4e4e; border: 1px solid #4f4e4e;`;
                 Mais.style.cssText = `background-color: #ffffff; color: #4f4e4e; border: 1px solid #4f4e4e;`;
                 Atribuicao.style.cssText = `background: #ffffff; color: #00000;`;
-
+                Carregamento.style.backgroundColor = '#ddd';
             }
         }
         // parte de temas claro e escuro
